@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Landing Page - Lead Form</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://link2shortner.link/tracker.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    form {
+      max-width: 400px;
+      margin: auto;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+    }
+    .dr-field-message {
+      color: red;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Compila il form per essere contattato</h2>
+
+  <form method="post" id="leadForm" class="dr-form">
+    <input type="text" class="dr-field-fname" placeholder="Nome"><br>
+    <input type="text" class="dr-field-lname" placeholder="Cognome"><br>
+    <input type="email" class="dr-field-email" placeholder="Email"><br>
+    <input type="tel" class="dr-field-phone" placeholder="Telefono"><br>
+    <input type="text" class="dr-field-desc" placeholder="Descrizione"><br>
+
+    <input type="hidden" class="dr-field-brand" value="auto">
+    <input type="hidden" class="dr-field-suid" value="TUO_SUID">
+    <input type="hidden" class="dr-campaign-id" value="TUO_CAMPAIGN_ID">
+    <input type="hidden" class="dr-field-clickid" value="">
+
+    <p class="dr-field-message" style="display: none;"></p>
+    <input type="submit" class="dr-field-submit" value="Invia">
+  </form>
+
+  <script>
+    function dr_callback_function(ret) {
+      ret = JSON.parse(ret);
+      if (ret.ret_code === "404") {
+        let message = "";
+        switch (ret.ret_message) {
+          case "Invalid Phone":
+            message = "Il numero di telefono non è valido.";
+            break;
+          case "Invalid Email":
+            message = "L'email non è valida.";
+            break;
+          case "No brand found":
+            message = "Errore di connessione al brand.";
+            break;
+        }
+        if (message) {
+          $(".dr-field-message").text(message).fadeIn();
+          setTimeout(() => $(".dr-field-message").fadeOut(), 7000);
+        }
+      } else if (ret.ret_code === "409") {
+        $(".dr-field-message").text("L'email è già registrata.").fadeIn();
+        setTimeout(() => $(".dr-field-message").fadeOut(), 7000);
+      }
+    }
+  </script>
+
+</body>
+</html>
